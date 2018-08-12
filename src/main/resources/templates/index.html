@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        .title{
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .content {
+            font-family: Time-roman;
+            border-top: 1px solid #ddd;
+            margin-top: 25px;
+            text-align: justify;
+        }
+        .content p {
+            font-size: 13.0pt;
+            line-height: 115%;
+            font-family: "Times New Roman","serif" !important;
+            color: #545252;
+            text-align:justify;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Hello Spring Boot</h1>
+
+    <form id="post-form" action="#">
+        <div class="form-group">
+            <label for="exampleInputEmail1">URL address</label>
+            <input name="url" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter an URL">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <button id="submitButton" type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <div class="row content">
+        <div id="title" class="col-md-12 title"></div>
+        <div id="summary" class="col-md-12" style="background:yellow"></div>
+        <div id="post-body" class="col-md-12"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+        $('#submitButton').click( function(e) {
+            e.preventDefault();
+            console.log("abc");
+            $.ajax({
+                url: '/post',
+                type: 'post',
+                dataType: 'json',
+                data: $('#post-form').serialize(),
+                success: function(data) {
+                    console.log(data);
+
+                    $("#title").html(data.title);
+                    $("#summary").html(data.summary);
+                    var els = data.body;
+                    $("#post-body").empty();
+                    els.forEach(function(e){
+                        if(e.type == "PARAGRAPH"){
+                            $("#post-body").append("<p>" + e.text + "</p>");
+                        }
+
+                        if(e.type == "IMAGE"){
+                            $("#post-body").append("<p><img src=\""+ e.link+ "\"></p>");
+                            if(e.text != null){
+                                $("#post-body").append("<p style=\"color:red\">" + e.text + "</p>");
+                            }
+
+                        }
+
+                    })
+
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
